@@ -1,6 +1,6 @@
 
 ca_geo <- geo.make(state= "CA", county="*")
-ca_dat <- pull_synth_data(geography= ca_geo)
+ca_dat <- pull_synth_data(2014, 5, geography= ca_geo)
 syn <- derive_synth_datasets(ca_dat, parallel= TRUE)
 test_micro <- syn[[1]][[2]];
 test_macro <- syn[[1]][[1]]; 
@@ -17,7 +17,9 @@ names(r) <- levels(test_micro$race)
 m <- round(tapply(test_micro$p, test_micro$marital_status, sum) * test_macro$age_by_sex[1] ,0)
 m[1] <- m[1] + 1
 
-save(list= c("test_micro", "test_macro", "g", "e", "a", "n", "r", "m" ), 
+# c_list <- add_cons
+
+save(list= c("test_micro", "test_macro", "g", "e", "a", "n", "r", "m", "c_list", "ca_dat" ), 
      file= "C:/Github_projects/ACSpulls/synthACS/tests/testthat/acsdat.Rdata")
 
 

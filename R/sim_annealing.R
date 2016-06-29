@@ -168,8 +168,8 @@ tae_mapply <- function(samples, constraints) {
 #' of occurance. This string specifies the variable within \code{micro_data} that contains the probability
 #' of selection.
 #' @param constraint_list A \code{list} of constraining macro data attributes. See \code{\link{add_constraint}}
-#' @param tolerance An integer giving the maximum acceptable loss (TAE). Defaults to 0.15\% of the 
-#' observations per constraint.
+#' @param tolerance An integer giving the maximum acceptable loss (TAE), enabling early stopping.
+#' Defaults to 0.05\% of the observations per constraint. 
 #' @param resample_size An integer controlling the rate of movement about the candidate space. 
 #' Specifically, it specifies the number of observations to change between iterations. Defaults to 
 #' min(num_obs, max(0.1\% * nobs, 500))
@@ -186,10 +186,10 @@ tae_mapply <- function(samples, constraints) {
 #' (1987): 157-162.
 #' @export
 optimize_microdata <- function(micro_data, prob_name= "p", constraint_list, 
-                               tolerance= round(sum(constraint_list[[1]]) * .0015 * length(constraint_list), 0),
+                               tolerance= round(sum(constraint_list[[1]]) / 2000 * length(constraint_list), 0),
                                resample_size= min(sum(constraint_list[[1]]), max(500, round(sum(constraint_list[[1]]) * .0001, 0))), 
-                               p_accept= 0.05, max_iter= 10000L, 
-                               seed= sample(1L:10000L, size=1, replace=FALSE),
+                               p_accept= 0.40, max_iter= 10000L, 
+                               seed= sample.int(10000L, size=1, replace=FALSE),
                                verbose= TRUE) {
   ## 01. error checking
   #------------------------------------
@@ -236,7 +236,7 @@ optimize_microdata <- function(micro_data, prob_name= "p", constraint_list,
     resample_size <- min(resample_size, round(sz * .05,0)) # check for small geogs, never more than 5%
     
     # set cooling schedule
-    cool_rt <- seq(p_accept, 0.005, length.out= max_iter)
+    cool_rt <- p_accept * exp(-1/20 * seq(length.out= max_iter) / length(constraint_list))
     
     repeat {
       ##  (A) drop obs, grab new ones
@@ -268,7 +268,7 @@ optimize_microdata <- function(micro_data, prob_name= "p", constraint_list,
         tae_0 <- tae_1
       } else { # P(Accept | \delta E > 0) \propto d_tae * U(0,1)
         tae_rel <- tae_1[[1]] / tae_0[[1]]
-        if(stats::runif(1, 0, 1 * tae_rel) < p_accept * cool_rt[iter]) {
+        if(stats::runif(1, 0, 1 * tae_rel) < cool_rt[iter]) {
           cur_samp <- rbind(cur_samp[-drop_ind, ], new_obs)
           tae_0 <- tae_1
         } # else -- stays the same

@@ -105,8 +105,8 @@ all_geogs_add_constraint <- function(attr_name= "variable", attr_total_list, mac
 #'      constraint_list_list= cll, p_accept= 0.01, max_iter= 1000L)
 #' }
 all_geog_optimize_microdata <- function(macro_micro, prob_name= "p", constraint_list_list, 
-                                        p_accept= 0.05, max_iter= 10000L,
-                                        seed= sample(1L:10000L, size=1, replace=FALSE),
+                                        p_accept= 0.40, max_iter= 10000L,
+                                        seed= sample.int(10000L, size=1, replace=FALSE),
                                         verbose= TRUE) {
   
   # 01. error checking
@@ -143,8 +143,11 @@ all_geog_optimize_microdata <- function(macro_micro, prob_name= "p", constraint_
   taes <- lapply(geography_anneal, function(l) return(l[["tae"]]))
   iters <- lapply(geography_anneal, function(l) return(l[["iter"]]))
   
-  return(list(best_fit= best_fits, tae= taes, call= mc, p_accept= p_accept, 
-              iter= iters, max_iter= max_iter, seed= seed))
+  smsm <- list(best_fit= best_fits, tae= taes, call= mc, p_accept= p_accept, 
+               iter= iters, max_iter= max_iter, seed= seed, D= length(constraint_list_list[[1]]))
+  # add class
+  class(smsm) <- "smsm_set"
+  return(smsm)
 }
 
 
