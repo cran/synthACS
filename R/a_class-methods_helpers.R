@@ -1,4 +1,16 @@
 
+# Solving namespace issues:
+#--------------------------------------
+#' @importFrom acs acs.fetch 
+#' @importFrom acs is.geo.set
+#' @importFrom data.table data.table
+#' @useDynLib synthACS
+#' @importFrom Rcpp sourceCpp
+#' @importFrom data.table is.data.table
+#' @importFrom data.table :=
+NULL
+#--------------------------------------
+
 ##---------------------------------------------------------
 ## CHECK IF OBJECT IS MEMBER OF CLASS
 ##---------------------------------------------------------
@@ -246,6 +258,22 @@ split.macroACS <- function(acs, n_splits) {
   return(split_macroACS)
 }
 
+#' @title Generate attribute vectors
+#' @description Generate a list of attribute vectors for new synthetic attribute creation from a 
+#' "macroACS" object.
+#' @param acs An object of class \code{"macroACS"}.
+#' @param choice A character vector specifying the name of one of the datasets in \code{acs} 
+#' @seealso \code{\link{all_geog_synthetic_new_attribute}}, \code{\link{synthetic_new_attribute}}
+#' @export
+gen_attr_vectors <- function(acs, choice) {
+  UseMethod("gen_attr_vectors", acs)
+}
+
+#' @export
+gen_attr_vectors.macroACS <- function(acs, choice) {
+  df <- fetch_data(acs, geography= "*", dataset= "estimate", choice= choice)
+  return(disaggregate_md(df))
+}
 
 ##---------------------------------------------------------
 ## GENERICS FOR CLASS "macro_micro" -- SPECIFICALLY ADDING CONSTRAINT LISTS
@@ -277,6 +305,11 @@ equal_constraint_populations <- function(constr_vec, geo_pop) {
 #' that constraints are built by marginalizing the synthetic micro datasets. Specifying 
 #' \code{"macro.table"} indicates that the constraints are build from the data in the base ACS tables.
 #' @seealso \code{\link{all_geogs_add_constraint}}
+#' @examples \dontrun{
+#'  # assumes that obj of class 'synthACS' already exists in your environment
+#'  g1 <- all_geog_constraint_gender(obj, "synthetic")
+#'  g2 <- all_geog_constraint_gender(obj, "macro_table")
+#' }
 #' @export
 all_geog_constraint_gender <- function(obj, method= c("synthetic", "macro.table")) {
   UseMethod("all_geog_constraint_gender", obj)
@@ -317,6 +350,11 @@ all_geog_constraint_gender.synthACS <- function(obj, method= c("synthetic", "mac
 #' that constraints are built by marginalizing the synthetic micro datasets. Specifying 
 #' \code{"macro.table"} indicates that the constraints are build from the data in the base ACS tables.
 #' @seealso \code{\link{all_geogs_add_constraint}}
+#' @examples \dontrun{
+#'  # assumes that obj of class 'synthACS' already exists in your environment
+#'  a1 <- all_geog_constraint_age(obj, "synthetic")
+#'  a2 <- all_geog_constraint_age(obj, "macro_table")
+#' }
 #' @export
 all_geog_constraint_age <- function(obj, method= c("synthetic", "macro.table")) {
   UseMethod("all_geog_constraint_age", obj)
@@ -358,6 +396,11 @@ all_geog_constraint_age.synthACS <- function(obj, method= c("synthetic", "macro.
 #' that constraints are built by marginalizing the synthetic micro datasets. Specifying 
 #' \code{"macro.table"} indicates that the constraints are build from the data in the base ACS tables.
 #' @seealso \code{\link{all_geogs_add_constraint}}
+#' @examples \dontrun{
+#'  # assumes that obj of class 'synthACS' already exists in your environment
+#'  m1 <- all_geog_constraint_marital_status(obj, "synthetic")
+#'  m2 <- all_geog_constraint_marital_status(obj, "macro_table")
+#' }
 #' @export
 all_geog_constraint_marital_status <- function(obj, method= c("synthetic", "macro.table")) {
   UseMethod("all_geog_constraint_marital_status", obj)
@@ -409,6 +452,11 @@ all_geog_constraint_marital_status.synthACS <- function(obj, method= c("syntheti
 #' that constraints are built by marginalizing the synthetic micro datasets. Specifying 
 #' \code{"macro.table"} indicates that the constraints are build from the data in the base ACS tables.
 #' @seealso \code{\link{all_geogs_add_constraint}}
+#' @examples \dontrun{
+#'  # assumes that obj of class 'synthACS' already exists in your environment
+#'  e1 <- all_geog_constraint_edu(obj, "synthetic")
+#'  e2 <- all_geog_constraint_edu(obj, "macro_table")
+#' }
 #' @export
 all_geog_constraint_edu <- function(obj, method= c("synthetic", "macro.table")) {
   UseMethod("all_geog_constraint_edu", obj)
@@ -467,6 +515,11 @@ all_geog_constraint_edu.synthACS <- function(obj, method= c("synthetic", "macro.
 #' that constraints are built by marginalizing the synthetic micro datasets. Specifying 
 #' \code{"macro.table"} indicates that the constraints are build from the data in the base ACS tables.
 #' @seealso \code{\link{all_geogs_add_constraint}}
+#' @examples \dontrun{
+#'  # assumes that obj of class 'synthACS' already exists in your environment
+#'  e1 <- all_geog_constraint_employment(obj, "synthetic")
+#'  e2 <- all_geog_constraint_employment(obj, "macro_table")
+#' }
 #' @export
 all_geog_constraint_employment <- function(obj, method= c("synthetic", "macro.table")) {
   UseMethod("all_geog_constraint_employment", obj)
@@ -518,6 +571,11 @@ all_geog_constraint_employment.synthACS <- function(obj, method= c("synthetic", 
 #' that constraints are built by marginalizing the synthetic micro datasets. Specifying 
 #' \code{"macro.table"} indicates that the constraints are build from the data in the base ACS tables.
 #' @seealso \code{\link{all_geogs_add_constraint}}
+#' @examples \dontrun{
+#'  # assumes that obj of class 'synthACS' already exists in your environment
+#'  n1 <- all_geog_constraint_nativity(obj, "synthetic")
+#'  n2 <- all_geog_constraint_nativity(obj, "macro_table")
+#' }
 #' @export
 all_geog_constraint_nativity <- function(obj, method= c("synthetic", "macro.table")) {
   UseMethod("all_geog_constraint_nativity", obj)
@@ -565,6 +623,11 @@ all_geog_constraint_nativity.synthACS <- function(obj, method= c("synthetic", "m
 #' that constraints are built by marginalizing the synthetic micro datasets. Specifying 
 #' \code{"macro.table"} indicates that the constraints are build from the data in the base ACS tables.
 #' @seealso \code{\link{all_geogs_add_constraint}}
+#' @examples \dontrun{
+#'  # assumes that obj of class 'synthACS' already exists in your environment
+#'  p1 <- all_geog_constraint_poverty(obj, "synthetic")
+#'  p2 <- all_geog_constraint_poverty(obj, "macro_table")
+#' }
 #' @export
 all_geog_constraint_poverty <- function(obj, method= c("synthetic", "macro.table")) {
   UseMethod("all_geog_constraint_poverty", obj)
@@ -613,6 +676,11 @@ all_geog_constraint_poverty.synthACS <- function(obj, method= c("synthetic", "ma
 #' that constraints are built by marginalizing the synthetic micro datasets. Specifying 
 #' \code{"macro.table"} indicates that the constraints are build from the data in the base ACS tables.
 #' @seealso \code{\link{all_geogs_add_constraint}}
+#' @examples \dontrun{
+#'  # assumes that obj of class 'synthACS' already exists in your environment
+#'  gm1 <- all_geog_constraint_geog_mob(obj, "synthetic")
+#'  gm2 <- all_geog_constraint_geog_mob(obj, "macro_table")
+#' }
 #' @export
 all_geog_constraint_geog_mob <- function(obj, method= c("synthetic", "macro.table")) {
   UseMethod("all_geog_constraint_geog_mob", obj)
@@ -690,6 +758,11 @@ all_geog_constraint_geog_mob.synthACS <- function(obj, method= c("synthetic", "m
 #' that constraints are built by marginalizing the synthetic micro datasets. Specifying 
 #' \code{"macro.table"} indicates that the constraints are build from the data in the base ACS tables.
 #' @seealso \code{\link{all_geogs_add_constraint}}
+#' @examples \dontrun{
+#'  # assumes that obj of class 'synthACS' already exists in your environment
+#'  i1 <- all_geog_constraint_income(obj, "synthetic")
+#'  i2 <- all_geog_constraint_income(obj, "macro_table")
+#' }
 #' @export
 all_geog_constraint_income <- function(obj, method= c("synthetic", "macro.table")) {
   UseMethod("all_geog_constraint_income", obj)
@@ -745,6 +818,11 @@ all_geog_constraint_income.synthACS <- function(obj, method= c("synthetic", "mac
 #' that constraints are built by marginalizing the synthetic micro datasets. Specifying 
 #' \code{"macro.table"} indicates that the constraints are build from the data in the base ACS tables.
 #' @seealso \code{\link{all_geogs_add_constraint}}
+#' @examples \dontrun{
+#'  # assumes that obj of class 'synthACS' already exists in your environment
+#'  r1 <- all_geog_constraint_race(obj, "synthetic")
+#'  r2 <- all_geog_constraint_race(obj, "macro_table")
+#' }
 #' @export
 all_geog_constraint_race <- function(obj, method= c("synthetic", "macro.table")) {
   UseMethod("all_geog_constraint_race", obj)
@@ -796,6 +874,85 @@ all_geog_constraint_race.synthACS <- function(obj, method= c("synthetic", "macro
   return(constraint)
 }
 
+##---------------------------------------------------------
+## Generics for class micro_synthetic
+##---------------------------------------------------------
+#' @title Marginalize synthetic attributes
+#' @description Marginalize, (ie- reduce in number), attributes of a synthetic dataset of class
+#' 'micro_synthetic' or a list of synthetic datasets of class 'synthACS'. This is done
+#' by marginalizing the joint distribution based on a set of specified attributes (see Arguments below).
+#' @param obj An object of class \code{"micro_synthetic"}.
+#' @param varlist A character vector of variable, or attribute, names in \code{obj}. 
+#' @param marginalize_out Logical. Do you wish to *remove* the variables in \code{varlist} 
+#' instead of keeping them? Defaults to \code{FALSE}
+#' @examples {
+#' # dummy data setup
+#' set.seed(567L)
+#' df <- data.frame(gender= factor(sample(c("male", "female"), size= 100, replace= TRUE)),
+#'                  age= factor(sample(1:5, size= 100, replace= TRUE)),
+#'                  pov= factor(sample(c("below poverty", "at above poverty"), 
+#'                                    size= 100, replace= TRUE, prob= c(.15,.85))),
+#'                  p= runif(100))
+#' df$p <- df$p / sum(df$p)
+#' class(df) <- c("data.frame", "micro_synthetic")
+#' 
+#' df2 <- marginalize_attr(df, varlist= "gender")
+#' df3 <- marginalize_attr(df, varlist= c("gender", "age"))
+#' df4 <- marginalize_attr(df, varlist= c("gender", "age"), marginalize_out= TRUE)
+#' 
+#' df_list <- replicate(10, df, simplify= FALSE)
+#' dummy_list <- replicate(10, list(NULL), simplify= FALSE)
+#' df_list <- mapply(function(a,b) {return(list(a, b))}, a= dummy_list, b= df_list, SIMPLIFY = FALSE)
+#' class(df_list) <- c("list", "synthACS")
+#' 
+#' # run the function
+#' df_list2 <- marginalize_attr(df_list, varlist= c("gender", "age"))
+#' }
+#' @export
+#' 
+marginalize_attr <- function(obj, varlist, marginalize_out= FALSE) {
+  UseMethod("marginalize_attr", obj)
+}
+
+#' @export
+marginalize_attr.micro_synthetic <- function(obj, varlist, marginalize_out= FALSE) {
+  if (!is.character(varlist) || !is.vector(varlist)) stop("varlist must be specified as a character vector.")
+  if (!all(sapply(varlist, function(l) exists(l, as.environment(obj)))))
+    stop("at least one variable in varlist is not in obj.")
+  if (!("p" %in% names(obj))) {
+    p_idx <- which(apply(obj, 2, is.numeric))
+    if (length(p_idx) > 1L) stop("obj appears to have more than 1 probability vector.")
+    p_name <- names(obj)[p_idx]
+    names(obj)[p_idx] <- "p"
+  }
+
+  data.table::setDT(obj)
+  if (!marginalize_out) {
+    obj <- obj[,sum(p), by= varlist]
+    data.table::setnames(obj, "V1", ifelse(exists("p_name"), p_name, "p"))
+    class(obj) <- c("data.table", "data.frame", "micro_synthetic")
+    return(obj)
+  } else {
+    p <- NULL # needed for R CMD Check -- see stackoverflow./com/questions/8096313
+    vlist2 <- names(obj)[which(!names(obj) %in% c(varlist, "p"))]
+    obj <- obj[,sum(p), by= vlist2]
+    data.table::setnames(obj, "V1", ifelse(exists("p_name"), p_name, "p"))
+    class(obj) <- c("data.table", "data.frame", "micro_synthetic")
+    return(obj)
+  }
+}
+
+#' @export
+marginalize_attr.synthACS <- function(obj, varlist, marginalize_out= FALSE) {
+  obj <- lapply(obj, function(l, v, m) {
+    l[[2]] <- marginalize_attr.micro_synthetic(l[[2]], v, m)
+    return(l)
+  }, v= varlist, m= marginalize_out)
+  class(obj) <- c("list", "synthACS")
+  return(obj)
+}
+
+
 
 ##---------------------------------------------------------
 ## Generics for class smsm_set
@@ -825,16 +982,130 @@ summary.smsm_set <- function(object, ...) {
   print(tae_q)
 }
 
+#' @title Plot simulated annealing path
+#' @description Plot the path TAE in the simulated annealing algorithm for a given geography
+#' @param object An object of class \code{'smsm_set'}, typically a result of call to 
+#' \code{\link{all_geog_optimize_microdata}}
+#' @param geography A string allowing string matching via \code{\link[base]{grep}} to 
+#' a specified geography.
+#' @param ... additional arguments passed to other methods
+#' @export
+plot_TAEpath <- function(object, geography,  ...) {
+  UseMethod("plot_TAEpath", object)
+}
 
-#' #' @title Combine separate SMSM optimizations
-#' #' @description Combine multiple objects of class "smsm_set" into a single object of class "smsm_set"
-#' #' @param ... objects of class 'smsm_set'.
-#' #' @seealso \code{\link[synthACS]{split}}
-#' #' @export
-#' combine_smsm <- function(...) {
-#'   UseMethod("combine_smsm", ...)
+#' @export
+plot_TAEpath.smsm_set <- function(object, geography, ...) {
+  
+  if (length(geography) != 1) stop("Please specify a single geography")
+  idx <- get_rowmatch(geography, names(object$tae))
+  if (length(idx) > 1) stop("geography specification returns multiple results. Please be more specific.")
+  tae_path <- object$tae_paths[[ idx ]]
+  if (!is.matrix(tae_path)) {
+    tae_path <- matrix(tae_path, ncol= 2)
+  }
+  
+  y_min <- max(min(tae_path) - 10, 0)
+  y_max <- round(max(tae_path) * 1.1, 0)
+  graphics::plot(x= 1:nrow(tae_path), y= tae_path[,2], type= "b", col= "black", pch= 18,
+       xlab= "Iteration",ylab= "TAE", ylim= c(y_min, y_max), ...)
+  graphics::points(x= 1:nrow(tae_path), y= tae_path[,1], pch= 1, col= "red")
+  graphics::title(main= paste(names(object$best_fit)[idx], "\nPath of Simulated Annealing Fit"))
+  graphics::legend(x= nrow(tae_path) * .76, y = y_max * .95, legend= c("Proposal", "Current"), title= "TAE",
+         pch= c(1, 18), col= c("red", "black"), cex= 0.8, bty= "n")
+}
+
+# @description save some duplicate typing in checking global parameter matches in combine_smsm() below
+# @param l A list of objects of class 'smsm_set'.
+# @param param_name a string specifying one of the elements of an 'smsm_set' object
+# @param warning_msg A string specifying the warning messsage if equality is not found.
+global_param_check <- function(l, param_name, warning_msg) {
+  param <- unlist(lapply(l, "[[", param_name))
+  if (!all(param == param[1])) warning(warning_msg)
+  return(param[1])
+}
+
+#' @title Combine separate SMSM optimizations
+#' @description Combine objects of class "smsm_set" into a single object of class "smsm_set"
+#' @param ... A list of objects of class 'smsm_set'.
+#' @seealso \code{\link[synthACS]{split}}, \code{\link[synthACS]{all_geog_optimize_microdata}}
+#' @examples \dontrun{
+#'  combined <- combine_smsm(smsm1, smsm2, smsm3)
 #' }
+#' @export
+combine_smsm <- function(...) {
+   smsm <- list(...)
+   if (!all(unlist(lapply(smsm, is.smsm_set)))) stop("All items supplied via '...' must be of class 'smsm_set'.")
+   
+   # 01. check if global parameter values are the same for all objects
+   max_iter <- global_param_check(smsm, "max_iter",
+                 warning_msg= "'smsm_set' objects do not have the equal max_iter values. Setting max_iter to first value.")
+     
+   D <- global_param_check(smsm, "D",
+                 warning_msg= "'smsm_set' objects do not have the equal D values. Setting D to first value.")
+   
+   p_accept <- global_param_check(smsm, "p_accept",
+                 warning_msg= "'smsm_set' objects do not have the equal p_accept values. Setting p_accept to first value.")
+   seed <- unlist(lapply(smsm, "[[", "seed"))
+   if (!all(seed == seed[1])) warning("'smsm_set' objects do not have equal seed values. Returning all seed values.")
+   else {seed <- seed[1]}
+   message("call will be set to NULL.")
+   
+   # 02. create return structure / combine list of smsm_set objects
+   ret <- list(best_fit=  do.call("c", lapply(smsm, "[[", "best_fit")),
+               tae=       do.call("c", lapply(smsm, "[[", "tae")),
+               call=      NULL,
+               p_accept=  p_accept,
+               iter=      do.call("c", lapply(smsm, "[[", "iter")),
+               max_iter=  max_iter,
+               tae_paths= drop(lapply(smsm, "[[", "tae_paths")),
+               seed=      seed,
+               D=         D)
+   class(ret) <- "smsm_set"
+   return(ret)
+}
 
+#' @title Extract best fit for a specified geogrpahy from an 'smsm_set' object
+#' @description Extract the best fit micro population (resulting from the simulated annealing 
+#' algorithm) for a given geography.
+#' @param obj An object of class \code{'smsm_set'}, typically a result of call to 
+#' \code{\link{all_geog_optimize_microdata}}
+#' @param geography A string allowing string matching via \code{\link[base]{grep}} to 
+#' a specified geography.
+#' @export
+get_best_fit <- function(obj, geography) {
+  UseMethod("get_best_fit", obj)
+}
 
-## combine, Z-statistics???
+#' @export
+get_best_fit.smsm_set <- function(obj, geography) {
+  if (length(geography) != 1) stop("Please specify a single geography")
+  idx <- get_rowmatch(geography, names(obj$best_fit))
+  if (length(idx) > 1) stop("geography specification returns multiple results. Please be more specific.")
+  
+  return(obj$best_fit[[ idx ]])
+}
+
+#' @title Extract the final TAE for a specified geogrpahy from an 'smsm_set' object
+#' @description Extract the final TAE (resulting from the simulated annealing 
+#' algorithm) for a given geography.
+#' @param obj An object of class \code{'smsm_set'}, typically a result of call to 
+#' \code{\link{all_geog_optimize_microdata}}
+#' @param geography A string allowing string matching via \code{\link[base]{grep}} to 
+#' a specified geography.
+#' @export
+get_final_tae <- function(obj, geography) {
+  UseMethod("get_final_tae", obj)
+}
+
+#' @export
+get_final_tae.smsm_set <- function(obj, geography) {
+  if (length(geography) != 1) stop("Please specify a single geography")
+  idx <- get_rowmatch(geography, names(obj$best_fit))
+  if (length(idx) > 1) stop("geography specification returns multiple results. Please be more specific.")
+  
+  return(obj$tae[[ idx ]])
+}
+
+## Z-statistics???
 

@@ -10,6 +10,15 @@
 #' @param constraint_list A \code{list} of prior constraints on the same dataset which you wish to
 #' add to. Defaults to \code{NULL} (ie. the default is that this is the first constraint.)
 #' @return A list of constraints.
+#' @examples \dontrun{
+#' ## assumes that you have a micro_synthetic dataset named test_micro and attribute counts
+#' ## named a,e,g respectively 
+#' c_list <- add_constraint(attr_name= "age", attr_totals= a, micro_data= test_micro)
+#' c_list <- add_constraint(attr_name= "edu_attain", attr_totals= e, micro_data= test_micro,
+#'                         constraint_list= c_list)
+#' c_list <- add_constraint(attr_name= "gender", attr_totals= g, micro_data= test_micro,
+#'                          constraint_list= c_list)
+#' }
 #' @export
 add_constraint <- function(attr_name= "variable", attr_totals, micro_data,
                            constraint_list= NULL) {
@@ -65,6 +74,13 @@ add_constraint <- function(attr_name= "variable", attr_totals, micro_data,
 #' @param new_obs An optional \code{data.frame} containing new observations with attributes matching 
 #' those in \code{sample_data}, \code{constraint_list}, and \code{prior_sample_totals}. Defaults 
 #' to \code{NULL}.
+#' @examples \dontrun{
+#' ## assumes that you have a micro_synthetic dataset named test_micro and attribute count
+#' ## named g respectively 
+#' c_list <- add_constraint(attr_name= "gender", attr_totals= g, micro_data= test_micro,
+#'             constraint_list= c_list)
+#' calculate_TAE(test_micro, c_list)
+#' }
 #' @export
 calculate_TAE <- function(sample_data, constraint_list, 
                           prior_sample_totals= NULL, dropped_obs_totals= NULL, new_obs= NULL) {
@@ -169,10 +185,10 @@ tae_mapply <- function(samples, constraints) {
 #' of selection.
 #' @param constraint_list A \code{list} of constraining macro data attributes. See \code{\link{add_constraint}}
 #' @param tolerance An integer giving the maximum acceptable loss (TAE), enabling early stopping.
-#' Defaults to 0.05\% of the observations per constraint. 
+#' Defaults to a misclassification rate of 1 individual per 1,000 per constraint. 
 #' @param resample_size An integer controlling the rate of movement about the candidate space. 
 #' Specifically, it specifies the number of observations to change between iterations. Defaults to 
-#' min(num_obs, max(0.1\% * nobs, 500))
+#' \code{0.5\%} the number of observations.
 #' @param p_accept The acceptance probability for the Metropolis acceptance criteria.
 #' @param max_iter The maximum number of allowable iterations. Defaults to \code{10000L}
 #' @param seed A seed for reproducibility. See \code{\link[base]{set.seed}}
@@ -184,10 +200,15 @@ tae_mapply <- function(samples, constraints) {
 #' machines." The journal of chemical physics 21.6 (1953): 1087-1092.
 #' @references Szu, Harold, and Ralph Hartley. "Fast simulated annealing." Physics letters A 122.3 
 #' (1987): 157-162.
+#' @examples \dontrun{
+#' ## assumes you have micro_synthetic object named test_micro and constraint_list named c_list
+#' opt_data <- optimize_microdata(test_micro, "p", c_list, max_iter= 10, resample_size= 500, 
+#'               p_accept= 0.01, verbose= FALSE)
+#' }
 #' @export
 optimize_microdata <- function(micro_data, prob_name= "p", constraint_list, 
                                tolerance= round(sum(constraint_list[[1]]) / 2000 * length(constraint_list), 0),
-                               resample_size= min(sum(constraint_list[[1]]), max(500, round(sum(constraint_list[[1]]) * .0001, 0))), 
+                               resample_size= min(sum(constraint_list[[1]]), max(500, round(sum(constraint_list[[1]]) * .005, 0))), 
                                p_accept= 0.40, max_iter= 10000L, 
                                seed= sample.int(10000L, size=1, replace=FALSE),
                                verbose= TRUE) {
@@ -203,11 +224,14 @@ optimize_microdata <- function(micro_data, prob_name= "p", constraint_list,
       !all(sapply(names(constraint_list), function(n, df) {
         exists(n, as.environment(df))}, df= micro_data)))
     stop("constraint_list must be a named list of numeric vectors with corresponding attributes in micro_data.")
-  if ((tolerance %% 1 != 0) | tolerance < 1 ) stop("tolerance must be specified as a positive integer.")
+  if ((tolerance %% 1 != 0) | tolerance < 0) stop("tolerance must be specified as an integer >= 0.")
   if ((resample_size %% 1 != 0) | resample_size < 1) stop("resample_size must be specified as a positive integer.")
   if (!is.numeric(p_accept) | p_accept <= 0 | p_accept >= 1) stop("p_accept must be numeric in (0,1).")
   if ((max_iter %% 1 != 0) | max_iter < 1) stop("max_iter must be an integer.")
-  
+
+  ## create output structure for proposal and accepted TAE
+  tae_path <- matrix(NA, nrow= max_iter, ncol= 2, dimnames= list(1:max_iter, c("proposal TAE", "current TAE")))
+    
   ## 02. Take initial sample / iteration
   #------------------------------------
   mc <- match.call()
@@ -218,6 +242,8 @@ optimize_microdata <- function(micro_data, prob_name= "p", constraint_list,
   cur_samp <- sample_micro(micro_data, sz, prob_name)
   tae_0 <- calculate_TAE(sample_data= cur_samp, constraint_list,
                          prior_sample_totals= NULL, dropped_obs_totals= NULL, new_obs= NULL)
+  # add TAE to tracker
+  tae_path[iter, ] <- rep(tae_0[[1]], 2)
   
   if (verbose) {
     cat("Iteration", iter, ": TAE =", sprintf("%.0f", tae_0[[1]]), "... \n")
@@ -225,9 +251,10 @@ optimize_microdata <- function(micro_data, prob_name= "p", constraint_list,
   
   # check if we got lucky
   if (tae_0$tae < tolerance) {
+    tae_path <- tae_path[1:iter,]
     # got lucky, return:
     return(list(best_fit= cur_samp, tae= tae_0[[1]], call= mc, p_accept= p_accept, 
-                iter= iter, max_iter= max_iter, seed= seed))
+                iter= iter, max_iter= max_iter, tae_path= tae_path, seed= seed))
   } else {
     iter <- iter + 1L
   ## 03. Anneal to convergence
@@ -235,7 +262,7 @@ optimize_microdata <- function(micro_data, prob_name= "p", constraint_list,
     con_names <- names(constraint_list)
     resample_size <- min(resample_size, round(sz * .05,0)) # check for small geogs, never more than 5%
     
-    # set cooling schedule
+    # set cooling schedule; eg. T = {T_1, ..., T_{max_iter} }
     cool_rt <- p_accept * exp(-1/20 * seq(length.out= max_iter) / length(constraint_list))
     
     repeat {
@@ -266,7 +293,7 @@ optimize_microdata <- function(micro_data, prob_name= "p", constraint_list,
       if (tae_1[[1]] < tae_0[[1]]) {
         cur_samp <- rbind(cur_samp[-drop_ind, ], new_obs) # P(Accept | \delta E <0) == 1
         tae_0 <- tae_1
-      } else { # P(Accept | \delta E > 0) \propto d_tae * U(0,1)
+      } else { # P(Accept | \delta E > 0, T_k) \propto d_tae * U(0,1)
         tae_rel <- tae_1[[1]] / tae_0[[1]]
         if(stats::runif(1, 0, 1 * tae_rel) < cool_rt[iter]) {
           cur_samp <- rbind(cur_samp[-drop_ind, ], new_obs)
@@ -274,10 +301,14 @@ optimize_microdata <- function(micro_data, prob_name= "p", constraint_list,
         } # else -- stays the same
       }
       
+      # add TAE to tracker
+      tae_path[iter,] <- c(tae_1[[1]], tae_0[[1]]) 
+      
       ## (C) check to exit
       if (tae_0[[1]] < tolerance | iter >= max_iter) {
+        tae_path <- tae_path[1:iter,]
         return(list(best_fit= cur_samp, tae= tae_0[[1]], call= mc, p_accept= p_accept, 
-                    iter= iter, max_iter= max_iter, seed= seed))
+                    iter= iter, max_iter= max_iter, tae_path= tae_path, seed= seed))
       } else { # (d) update for next iteration
         iter <- iter + 1
       }

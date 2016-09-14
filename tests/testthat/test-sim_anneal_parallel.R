@@ -2,14 +2,14 @@
 library(testthat)
 library(synthACS)
 
+load("C:/Github_projects/ACSpulls/synthACS/tests/testthat/par_sim_anneal.Rdata")
+
 #------------------------------------------------------------------------------
 context("adding constraints - all geogs")
 #------------------------------------------------------------------------------
 
 test_that("can add 1 constraint to all geogs", {
   # create test inputs
-  load("C:/Github_projects/ACSpulls/synthACS/tests/testthat/par_sim_anneal.Rdata")
-  
   cll <- all_geogs_add_constraint(attr_name= "age", attr_total_list= a, macro_micro= syn)
   
   # test structure output
@@ -21,8 +21,6 @@ test_that("can add 1 constraint to all geogs", {
 
 test_that("can add 2+ constraints to all geogs", {
   # create test inputs
-  load("C:/Github_projects/ACSpulls/synthACS/tests/testthat/par_sim_anneal.Rdata")
-  
   cll <- all_geogs_add_constraint(attr_name= "age", attr_total_list= a, macro_micro= syn)
   cll <- all_geogs_add_constraint(attr_name= "gender", attr_total_list= g, macro_micro= syn, constraint_list_list= cll)
   cll <- all_geogs_add_constraint(attr_name= "edu_attain", attr_total_list= e, macro_micro= syn, constraint_list_list= cll)
@@ -40,19 +38,22 @@ context("can simulate anneal - all geogs in parallel")
 
 test_that("optimization works", {
   # create test inputs
-  load("C:/Github_projects/ACSpulls/synthACS/tests/testthat/par_sim_anneal.Rdata")
-  
   cll <- all_geogs_add_constraint(attr_name= "age", attr_total_list= a, macro_micro= syn)
   cll <- all_geogs_add_constraint(attr_name= "gender", attr_total_list= g, macro_micro= syn, constraint_list_list= cll)
   cll <- all_geogs_add_constraint(attr_name= "edu_attain", attr_total_list= e, macro_micro= syn, constraint_list_list= cll)
   
   opt_geog <- all_geog_optimize_microdata(syn, prob_name= "p", constraint_list_list= cll,
-                                          max_iter= 10L)
+                                          max_iter= 10L, verbose= FALSE)
   
   # test output
   expect_true(is.list(opt_geog$best_fit))
+  expect_true(is.list(opt_geog$tae))
+  expect_true(is.list(opt_geog$iter))
+  expect_true(is.list(opt_geog$tae_paths))
+  
   expect_true(all(unlist(lapply(opt_geog$best_fit, is.data.table))))
   expect_true(all(unlist(opt_geog$iter) <= 10L))
-  expect_true(all(unlist(opt_geog$tae) > 0))
+  expect_true(all(unlist(opt_geog$tae) >= 0))
   expect_true(all(unlist(opt_geog$tae) %% 1 == 0))
+  
 })

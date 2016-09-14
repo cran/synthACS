@@ -22,6 +22,11 @@ m[1] <- m[1] + 1
 save(list= c("test_micro", "test_macro", "g", "e", "a", "n", "r", "m", "c_list", "ca_dat" ), 
      file= "C:/Github_projects/ACSpulls/synthACS/tests/testthat/acsdat.Rdata")
 
+### see JSS suplemental script
+# transit_work <- gen_attr_vectors(ca_transit, "mode_transit_by_age") 
+# transit_work <- lapply(transit_work, function(x, lev) { ... })
+# towork <- transit_work[ c(2,4,6,8)]
+# save(towork, file= "C:/Github_projects/ACSpulls/synthACS/tests/testthat/towork.rda")
 
 ##### build other test data set
 rm(list=ls())

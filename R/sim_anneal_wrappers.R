@@ -142,9 +142,11 @@ all_geog_optimize_microdata <- function(macro_micro, prob_name= "p", constraint_
   best_fits <- lapply(geography_anneal, function(l) return(l[["best_fit"]]))
   taes <- lapply(geography_anneal, function(l) return(l[["tae"]]))
   iters <- lapply(geography_anneal, function(l) return(l[["iter"]]))
+  tae_paths <- lapply(geography_anneal, function(l) return(l[["tae_path"]]))
   
   smsm <- list(best_fit= best_fits, tae= taes, call= mc, p_accept= p_accept, 
-               iter= iters, max_iter= max_iter, seed= seed, D= length(constraint_list_list[[1]]))
+               iter= iters, max_iter= max_iter, tae_paths= tae_paths, seed= seed, 
+               D= length(constraint_list_list[[1]]))
   # add class
   class(smsm) <- "smsm_set"
   return(smsm)
@@ -165,54 +167,90 @@ all_geog_optimize_microdata <- function(macro_micro, prob_name= "p", constraint_
 #' @param prob_name A string specifying the column name of each \code{data.frame} in \code{df_list} 
 #' containing the probabilities for each synthetic observation.
 #' @param attr_name A string specifying the desired name of the new attribute to be added to the data.
-#' @param attr_vector_list A \code{list} of named vectors with each specifying the counts or 
-#' percentages of the new attribute, or variable, to be added. Names must include appropriate 
-#' naming for expression matching.
-#' @param attr_levels A character vector specifying the complete set of levels for the new 
-#' attribute.
 #' @param conditional_vars An character vector specifying the existing variables, if any, on which 
 #' the new attribute (variable) is to be conditioned on for each dataset. Variables must be specified 
 #' in order. Defaults to \code{NULL} ie- an unconditional new attribute.
-#' @param ht_list A \code{list} of equal length to \code{conditional_vars}. Each element \code{k} of
-#' \code{ht_list} is a \code{data.frame} constructed as a hash-table with one-to-one correspondence  
-#' between \code{ht_list[[k]]} and \code{conditional_vars[k]}. Of the key-value pair, the key is
-#' the first column and the value is the second column. See \code{\link{synthetic_new_attribute}}.
+#' @param st_list A \code{list} of equal length to \code{df_list}. Each element of \code{st_list} is 
+#' a \code{data.frame} symbol table with N + 2 columns. The last two columns must be:
+#' 1. A vector containing the new attribute counts or percentages; 2. is a vector of the new attribute 
+#' levels. The first N columns must match the conditioning scheme imposed by the variables in 
+#' \code{conditional_vars}. See \code{\link{synthetic_new_attribute}} and examples.
 #' @return A list of new synthetic_micro datasets each with class "synthetic_micro".
 #' @seealso \code{\link{synthetic_new_attribute}}
+#' @examples \dontrun{
+#'  set.seed(567L)
+#'  df <- data.frame(gender= factor(sample(c("male", "female"), size= 100, replace= TRUE)),
+#'                  age= factor(sample(1:5, size= 100, replace= TRUE)),
+#'                  pov= factor(sample(c("lt_pov", "gt_eq_pov"),
+#'                                     size= 100, replace= TRUE, prob= c(.15,.85))),
+#'                  p= runif(100))
+#' df$p <- df$p / sum(df$p)
+#' class(df) <- c("data.frame", "micro_synthetic")
+#' 
+#' # and example test elements
+#' cond_v <- c("gender", "pov")
+#' levels <- c("employed", "unemp", "not_in_LF")
+#' sym_tbl <- data.frame(gender= rep(rep(c("male", "female"), each= 3), 2),
+#'                       pov= rep(c("lt_pov", "gt_eq_pov"), each= 6),
+#'                       cnts= c(52, 8, 268, 72, 12, 228, 1338, 93, 297, 921, 105, 554),
+#'                       lvls= rep(levels, 4))
+#' 
+#' 
+#' 
+#' df_list <- replicate(10, df, simplify= FALSE)
+#' st_list <- replicate(10, sym_tbl, simplify= FALSE)
+#' 
+#' # run
+#' library(parallel)
+#' syn <- all_geog_synthetic_new_attribute(df_list, prob_name= "p", attr_name= "variable",
+#'                                         conditional_vars= cond_v,st_list= st_list)
+#' }
 #' @export
 all_geog_synthetic_new_attribute <- function(df_list, prob_name= "p",
                                              attr_name= "variable",
-                                             attr_vector_list, attr_levels, 
                                              conditional_vars= NULL,
-                                             ht_list= NULL) {
+                                             st_list= NULL) {
  
   # 01. error checking
   #------------------------------------
-  if (!is.list(df_list) | !is.synthACS(df_list))
-    stop("df_list must be supplied as a class 'synthACS' object.")
+  if (!is.null(st_list)) {
+    if (length(df_list) != length(st_list))
+      stop("when conditioning, st_list and df_list must have equal lengths")
+  }
  
   # 02. wrap synthetic_new_attribute in parallel
   #------------------------------------
   len <- length(df_list)
   
-  if (!is.null(conditional_vars)) { # need to replicate() these for clusterMap since they are already lists
+  if (!is.null(conditional_vars)) { # need to replicate() these for clusterMap 
     conditional_vars <- replicate(len, conditional_vars, simplify= FALSE)
-    ht_list <- replicate(len, ht_list, simplify= FALSE)
   }
   
   nnodes <- min(parallel::detectCores() - 1, len)
   if (grepl("Windows", utils::sessionInfo()$running)) {cl <- parallel::makeCluster(nnodes, type= "PSOCK")}
   else {cl <- parallel::makeCluster(nnodes, type= "FORK")}
   
-  synthethic_data <- parallel::clusterMap(cl, RECYCLE= TRUE, SIMPLIFY= FALSE, .scheduling= "dynamic",
+  # to allow simplified testing (using non synthACS class objects)
+  if (is.synthACS(df_list)) {df_list2 <- lapply(df_list, function(l) return(l[[2]]))} 
+  else {df_list2 <- df_list}
+  
+  parallel::clusterExport(cl, "setnames")
+  
+  synthetic_data <- parallel::clusterMap(cl, RECYCLE= TRUE, SIMPLIFY= FALSE, .scheduling= "dynamic",
                                 fun= synthetic_new_attribute,
-                                df= df_list, prob_name= prob_name, attr_name= attr_name,
-                                attr_vector= attr_vector_list, attr_levels= attr_levels, 
+                                df= df_list2,
+                                prob_name= prob_name, attr_name= attr_name,
                                 conditional_vars= conditional_vars,
-                                ht_list= ht_list)
+                                sym_tbl= st_list)
   
   parallel::stopCluster(cl)
   # 03. return
   #------------------------------------
-  return(synthethic_data) 
+  df_list <- mapply(function(x,y) {return(list(macro_constraints= x, synthetic_micro= y))},
+                    x= lapply(df_list, function(l) return(l[[1]])),
+                    y= synthetic_data, 
+                    SIMPLIFY = FALSE)
+  
+  class(df_list) <- c("list", "synthACS")
+  return(df_list) 
 }
