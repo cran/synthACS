@@ -19,6 +19,8 @@ pull_race_data <- function(endyear, span, geography) {
   
   # 01 -- pull data
   #----------------------------------------------
+  oldw <- getOption("warn")
+  options(warn= -1) # suppress warnings from library(acs) / ACS API
   race_all <- acs::acs.fetch(endyear = endyear, span= span, geography = geography, 
                         table.number = "B02001", col.names = "pretty")
   race_aa <- acs::acs.fetch(endyear = endyear, span= span, geography = geography, 
@@ -37,7 +39,7 @@ pull_race_data <- function(endyear, span, geography) {
                        table.number = "B01001H", col.names = "pretty")
   race_hisp <- acs::acs.fetch(endyear = endyear, span= span, geography = geography, 
                        table.number = "B01001I", col.names = "pretty")
-  
+  options(warn= oldw) # turn warnings back on
   
   # 02 -- create lists of EST and SE -- as data.frames
   #----------------------------------------------
@@ -67,10 +69,9 @@ pull_race_data <- function(endyear, span, geography) {
   
   # 03 -- combine columns
   #----------------------------------------------
-  est <- do.call("cbind", est)
+  est <- as.data.frame(do.call("cbind", est)); se <- as.data.frame(do.call("cbind", se))
   est <- est[, c(1:2, seq(3,26,3), seq(4,26,3), seq(5,26,3))]
-  se  <- do.call("cbind", se)
-  se  <- se[, c(1:2, seq(3,26,3), seq(4,26,3), seq(5,26,3))]
+  se <-  se[, c(1:2, seq(3,26,3), seq(4,26,3), seq(5,26,3))]
   
   names(est) <- names(se) <- c(paste("agg", c("count", "white"), sep= "_"), 
     paste(rep(c("total", "m", "f"), each= 8),
@@ -80,8 +81,8 @@ pull_race_data <- function(endyear, span, geography) {
   # 04 -- combine and return
   #----------------------------------------------
   ret <- list(endyear= endyear, span= span,
-              estimates= est,
-              standard_error= se,
+              estimates= list(pop_by_race= est),
+              standard_error= list(pop_by_race= se),
               geography= geo,
               geo_title= unlist(geography@geo.list))
   class(ret) <- "macroACS"

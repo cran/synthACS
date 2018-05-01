@@ -1,27 +1,25 @@
 Package: synthACS
 Title: Synthetic Microdata and Spatial MicroSimulation Modeling for ACS
         Data
-Version: 1.0.1
+Version: 1.4.2
 Authors@R: person("Alex", "Whitworth",,email = "whitworth.alex@gmail.com", c("aut", "cre"))
-Description: Firstly provides a wrapper to library(acs) to access curated set
-  of American Community Survey (ACS) base tables which may be of interest
-  to many researchers. Secondly, it builds synthetic micro-datasets of ACS data
-  at any specified geographic level with 10 default individual attributes. Thirdly,
-  provides functionality for data-extensibility of micro-datasets; allowing users
-  to both add data attributes and marginalize undesired attributes. And
-  finally, the package also conducts spatial microsimulation modeling (SMSM)
-  via simulated annealing.  SMSM is conducted in parallel by default.
-Depends: R (>= 3.2.3), acs (>= 1.2), data.table (>= 1.9.6)
+Description: Provides access to curated American Community Survey (ACS) base tables via a wrapper
+  to library(acs). Builds synthetic micro-datasets at any user-specified geographic level with
+  ten default attributes; and, conducts spatial microsimulation modeling (SMSM) via simulated
+  annealing.  SMSM is conducted in parallel by default. Lastly, we provide functionality for
+  data-extensibility of micro-datasets.
+Depends: R (>= 3.2.3), acs (>= 2.1), data.table (>= 1.9.6)
 Imports: Rcpp
 License: MIT + file LICENSE
 LazyData: true
-Suggests: testthat, tigris (>= 0.3), sp (>= 1.2), leaflet (>= 1.0),
-        shiny (>= 0.13), rgdal (>= 1.1)
-RoxygenNote: 5.0.1
+Suggests: testthat, sp (>= 1.2), leaflet (>= 1.0), shiny (>= 0.13),
+        knitr, rmarkdown, R.rsp
+RoxygenNote: 6.0.1
 LinkingTo: Rcpp
+VignetteBuilder: knitr, R.rsp
 NeedsCompilation: yes
-Packaged: 2017-02-12 07:58:06 UTC; Acer
+Packaged: 2018-04-30 04:50:05 UTC; meanmachine
 Author: Alex Whitworth [aut, cre]
 Maintainer: Alex Whitworth <whitworth.alex@gmail.com>
 Repository: CRAN
-Date/Publication: 2017-02-12 12:03:53
+Date/Publication: 2018-05-01 22:32:35 UTC

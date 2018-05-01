@@ -1,4 +1,45 @@
-
+#' @title Pull ACS base tables
+#' @description A wrapper function to pull multiple base tables from ACS API via 
+#' \code{\link[acs]{acs.fetch}}. 
+#' @param endyear An integer, indicating the latest year of the data in the survey.
+#' @param span An integer in \code{c(1,3,5)} indicating the span of the desired data.
+#' @param geography a valid \code{geo.set} object specifying the census geography or 
+#' geographies to be fetched.
+#' @param table_vec A \code{character} vector specifying ACS base tables.
+#' @return A \code{'macroACS'} class object
+#' @export
+#' @references \url{https://www.census.gov/programs-surveys/acs/technical-documentation/summary-file-documentation.html}
+#' @examples \dontrun{
+#' # make geography
+#' la_geo <- acs::geo.make(state= "CA", county= "Los Angeles City")
+#' # pull data 
+#' la_dat <- pull_acs_basetables(endyear= 2015, span= 1, geography= la_geo, 
+#'   table_vec= c("B00001", "B00002", "B01003"))
+#' }
+pull_acs_basetables <- function(endyear, span, geography, table_vec) {
+  check_geo_inputs(endyear, span, geography)
+  if (!is.character(table_vec) | length(table_vec) < 1L) 
+    stop("table_vec must be a character vector of ACS base table numbers")
+  
+  nr <- length(table_vec) 
+  temp_dat <- vector("list", length= nr)
+  oldw <- getOption("warn")
+  options(warn= -1) # suppress warnings from library(acs) / ACS API
+  for (i in 1:nr) {
+    temp_dat[[i]] <- acs::acs.fetch(endyear, span, geography, table.number= table_vec[i],
+                                    col.names= "pretty")
+  }
+  options(warn= oldw) # turn warnings back on
+  
+  ret <- list(endyear= endyear, span= span,
+              estimates=lapply(temp_dat, function(l) {return(as.data.frame(l@estimate))}),
+              standard_error= lapply(temp_dat, function(l) {return(as.data.frame(l@standard.error))}),
+              geography= temp_dat[[1]]@geography,
+              geo_title= unlist(geography@geo.list)
+  )
+  class(ret) <- "macroACS"
+  return(ret)
+}
 
 #' @title Pull ACS data for synthetic data creation.
 #' @description Pull ACS data for a specified geography from base tables
@@ -28,6 +69,8 @@ pull_synth_data <- function(endyear, span, geography) {
   
   # 01 -- pull data
   #----------------------------------------------
+  oldw <- getOption("warn")
+  options(warn= -1) # suppress warnings from library(acs) / ACS API
   age_by_sex <- acs::acs.fetch(endyear= endyear, span= span, geography= geography, 
                           table.number = "B01001", col.names= "pretty") # total pop
   pop_by_race <- pull_race_data(endyear= endyear, span= span, geography= geography)
@@ -51,11 +94,12 @@ pull_synth_data <- function(endyear, span, geography) {
                              table.number = "B17005", col.names = "pretty") # (age 16+, by sex & employment status)
   # pov_status2 <- acs::acs.fetch(endyear = endyear, span= span, geography = geography, 
   #                          table.number = "B17007", col.names = "pretty") # B17007 - age 15+, by age and gender ... 
+  options(warn= oldw) # turn warnings back on
   
   # 02 -- create lists of EST and SE -- as data.frames
   #----------------------------------------------
   est <- list(age_by_sex= data.frame(age_by_sex@estimate),
-              pop_by_race= pop_by_race$estimate,
+              pop_by_race= pop_by_race$estimate$pop_by_race,
               marital_status= data.frame(marital_status@estimate),
               edu= data.frame(edu@estimate),
               nativity= data.frame(nativity@estimate),
@@ -68,7 +112,7 @@ pull_synth_data <- function(endyear, span, geography) {
               # pov_status2= data.frame(pov_status2@estimate))
   
   se <- list(age_by_sex= data.frame(age_by_sex@standard.error),
-             pop_by_race= pop_by_race$standard_error,
+             pop_by_race= pop_by_race$standard_error$pop_by_race,
              marital_status= data.frame(marital_status@standard.error),
              edu= data.frame(edu@standard.error),
              nativity= data.frame(nativity@standard.error),
@@ -81,9 +125,6 @@ pull_synth_data <- function(endyear, span, geography) {
              # pov_status2= data.frame(pov_status2@standard.error))
   
   geo <- age_by_sex@geography
-  
-  rm(age_by_sex, pop_by_race, marital_status, edu, nativity, by_inc_12mo, geo_mob_inc, 
-     geo_mob_edu, emp_status, pov_status1) # geo_mob_mar_stat, pov_status2)
   
   # 03 -- combine columns
   #----------------------------------------------
