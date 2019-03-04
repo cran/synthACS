@@ -1,4 +1,4 @@
-c06aac1ebf23d6c314c3c15c37509116 *DESCRIPTION
+a42cac05cd7ae96114de574f416e1414 *DESCRIPTION
 9efbbd82532f93a37cfe035dacda188a *LICENSE
 ed0556b3191cf88d839198bf80fae0cf *NAMESPACE
 200a6e671c2fd458b57da88aff324953 *R/RcppExports.R
@@ -30,7 +30,7 @@ b42ae91c6abc98f28c075a8b521f2b57 *R/synth_nativity.R
 d134cfc889407f3dbcd68c954e33b36e *R/synth_pov.R
 2de7e4e3d4e79d1a80e17de5b7ece460 *R/synth_race.R
 6a57e29094b386cb31c9d669a46dec21 *README.md
-b2ea82136403439b8bcf3aca652cc63b *build/vignette.rds
+a09854d2f9a9afce9862e5635122e003 *build/vignette.rds
 931c3f0a678c68986b85c79bbaab660e *data/AgeRaceDR.rda
 0817a47348f0e239158e1981c8661db3 *data/BR2014.rda
 ed99dc478ac6dfc511ac00abd7925899 *data/LifeExp.rda
@@ -40,7 +40,7 @@ ca89bd914fb9fba1472f38b29d47866a *data/adjDR.rda
 f21d6996f74f02d9dc828526b00dbc3a *data/rawDR.rda
 e203660c8d4d09f440ea7aea9772a5e7 *data/stateFR.rda
 29e029cc585e0d4d3d4da87c87d2b75d *inst/CITATION
-e1ad3efff85602ce794a221eba889be0 *inst/doc/jss_synthACS.pdf
+157a8b4b9691b88543ab4e5a7f23db7b *inst/doc/jss_synthACS.pdf
 552c116b4c050d5912323cbe354819ea *inst/doc/jss_synthACS.tex.rsp
 02dba0b8071422d84e6c369bf51a1acb *man/AgeRaceDR.Rd
 346734001f49dc0d57edebcd8eb34b22 *man/BR2014.Rd
