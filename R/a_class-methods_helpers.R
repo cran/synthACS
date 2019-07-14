@@ -1,13 +1,10 @@
 
 # Solving namespace issues:
 #--------------------------------------
-#' @importFrom acs acs.fetch 
-#' @importFrom acs is.geo.set
-#' @importFrom data.table data.table
+#' @importFrom acs acs.fetch is.geo.set
+#' @importFrom data.table data.table is.data.table := setnames
 #' @useDynLib synthACS
 #' @importFrom Rcpp sourceCpp
-#' @importFrom data.table is.data.table
-#' @importFrom data.table :=
 NULL
 #--------------------------------------
 
@@ -436,7 +433,8 @@ all_geog_constraint_marital_status.synthACS <- function(obj, method= c("syntheti
       # (matches assumptions from synth_data_mar)
       pop_u15 <- sum(l$macro_constraints$age_by_sex[c(4,20)])
       
-      constr_vec <- c("never_mar"= nv_mar + pop_u15, "married"= mar, "mar_apart"=mar_apart, "widowed"= wid, "divorced"=div)
+      constr_vec <- c("never_mar"= nv_mar + pop_u15, "married"= mar, "mar_apart"=mar_apart, 
+                      "widowed"= wid, "divorced"= div)
       return(equal_constraint_populations(constr_vec, l[[1]]$age_by_sex[1]))
     })
   }

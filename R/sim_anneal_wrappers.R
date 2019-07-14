@@ -127,6 +127,8 @@ all_geog_optimize_microdata <- function(macro_micro, prob_name= "p", constraint_
   if (grepl("Windows", utils::sessionInfo()$running)) {cl <- parallel::makeCluster(nnodes, type= "PSOCK")}
   else {cl <- parallel::makeCluster(nnodes, type= "FORK")}
   
+  parallel::clusterExport(cl, "data.table", envir= as.environment("package:data.table"))
+  
   geography_anneal <- parallel::clusterMap(cl, RECYCLE= TRUE, SIMPLIFY= FALSE, .scheduling= "dynamic",
                                  fun= optimize_microdata, 
                                  micro_data= micro_datas, prob_name= prob_name,
@@ -234,7 +236,7 @@ all_geog_synthetic_new_attribute <- function(df_list, prob_name= "p",
   if (is.synthACS(df_list)) {df_list2 <- lapply(df_list, function(l) return(l[[2]]))} 
   else {df_list2 <- df_list}
   
-  parallel::clusterExport(cl, "setnames")
+  parallel::clusterExport(cl, "setnames", envir= as.environment("package:data.table")) 
   
   synthetic_data <- parallel::clusterMap(cl, RECYCLE= TRUE, SIMPLIFY= FALSE, .scheduling= "dynamic",
                                 fun= synthetic_new_attribute,
