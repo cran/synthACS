@@ -1,8 +1,8 @@
-22f2d885ec3ce4d64acf8abbcf37d0f2 *DESCRIPTION
+0b1a6e1a24fe0a27b7d15b4b76d59b01 *DESCRIPTION
 9efbbd82532f93a37cfe035dacda188a *LICENSE
 d9d9e73ec825c9b01fe143a6b5dc72aa *NAMESPACE
 200a6e671c2fd458b57da88aff324953 *R/RcppExports.R
-df3943441e11c4a877bc850a04ce1517 *R/a_class-methods_helpers.R
+fc53498712c964119838917e86657988 *R/a_class-methods_helpers.R
 1b12d32a73acb1e23428ee3be49e0546 *R/a_data-documentation.R
 cc083e75a19008a11fbac16dd075927c *R/a_internal-functional_helpers.R
 3eb2eb2c30e357dc6fc83e32a168bd3b *R/class_testing_functions.R
@@ -40,7 +40,7 @@ ca89bd914fb9fba1472f38b29d47866a *data/adjDR.rda
 f21d6996f74f02d9dc828526b00dbc3a *data/rawDR.rda
 e203660c8d4d09f440ea7aea9772a5e7 *data/stateFR.rda
 29e029cc585e0d4d3d4da87c87d2b75d *inst/CITATION
-d4be555c11d3018fe71dd5546649f884 *inst/doc/jss_synthACS.pdf
+0ea01d5ebf14660e691e025619859042 *inst/doc/jss_synthACS.pdf
 552c116b4c050d5912323cbe354819ea *inst/doc/jss_synthACS.tex.rsp
 02dba0b8071422d84e6c369bf51a1acb *man/AgeRaceDR.Rd
 346734001f49dc0d57edebcd8eb34b22 *man/BR2014.Rd
@@ -103,7 +103,7 @@ af48e760a75ab10e4020d3b433af187a *src/disaggregate_md.cpp
 a92b9dd8f7376a520108075560a94d16 *tests/testthat.R
 3ee01a1784c9e02ce3e0da32535cba9a *tests/testthat/test-class_macroACS_methods.R
 3789b71651cce9388eedf25aa66754ec *tests/testthat/test-class_synthACS_methods.R
-e13fe3432d1abe7b013a952cac028706 *tests/testthat/test-combine_smsm.R
+437c3db238977744a29a60e744952232 *tests/testthat/test-combine_smsm.R
 3f2c9f23663be66ec350d07041128c52 *tests/testthat/test-derive_synthetic.R
 e90e07e8d86b2f8702cdc7165449f13d *tests/testthat/test-sim_anneal.R
 5e822228ce276d6894573718c8f5c093 *tests/testthat/test-sim_anneal_parallel.R
