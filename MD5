@@ -1,9 +1,9 @@
-0b1a6e1a24fe0a27b7d15b4b76d59b01 *DESCRIPTION
+68e3a8f5a00d51c6637d889ec4061eb5 *DESCRIPTION
 9efbbd82532f93a37cfe035dacda188a *LICENSE
 d9d9e73ec825c9b01fe143a6b5dc72aa *NAMESPACE
 200a6e671c2fd458b57da88aff324953 *R/RcppExports.R
 fc53498712c964119838917e86657988 *R/a_class-methods_helpers.R
-1b12d32a73acb1e23428ee3be49e0546 *R/a_data-documentation.R
+265ef7eefc937ac2964f73c3b092aa1c *R/a_data-documentation.R
 cc083e75a19008a11fbac16dd075927c *R/a_internal-functional_helpers.R
 3eb2eb2c30e357dc6fc83e32a168bd3b *R/class_testing_functions.R
 b4c9e6ce52f01fa00df26438d0972b88 *R/derive_synth_data.R
@@ -37,10 +37,11 @@ ed99dc478ac6dfc511ac00abd7925899 *data/LifeExp.rda
 86a533aa200d3a22a729d76075004686 *data/MBR.rda
 76b32998fccf9d43eff4883edcf09816 *data/TFR.rda
 ca89bd914fb9fba1472f38b29d47866a *data/adjDR.rda
+533477081adf8d21e4deb51fa1757fea *data/la_hospitals.rda
 f21d6996f74f02d9dc828526b00dbc3a *data/rawDR.rda
 e203660c8d4d09f440ea7aea9772a5e7 *data/stateFR.rda
 29e029cc585e0d4d3d4da87c87d2b75d *inst/CITATION
-0ea01d5ebf14660e691e025619859042 *inst/doc/jss_synthACS.pdf
+a2a4428ea1017558c1160c77b043c5f6 *inst/doc/jss_synthACS.pdf
 552c116b4c050d5912323cbe354819ea *inst/doc/jss_synthACS.tex.rsp
 02dba0b8071422d84e6c369bf51a1acb *man/AgeRaceDR.Rd
 346734001f49dc0d57edebcd8eb34b22 *man/BR2014.Rd
@@ -78,6 +79,7 @@ a42455304a38b7f2b203a4334171f65d *man/is.macroACS.Rd
 4d08d64b125d68b1f6693897f7340c1b *man/is.micro_synthetic.Rd
 79f0b2ae9fca5fc683a9c7cea79d503e *man/is.smsm_set.Rd
 50da1508ff4adb40f98fe91244e8a2ec *man/is.synthACS.Rd
+b500ce478f67b3e8b6f8e54b396ff692 *man/la_hospitals.Rd
 67b12f63ba2ab3c883015f3e3db3ed76 *man/marginalize_attr.Rd
 6c61b0e1579af972eab29163a92c3a88 *man/optimize_microdata.Rd
 2b0c0582321fbead33a8f273a111de4d *man/plot_TAEpath.Rd
