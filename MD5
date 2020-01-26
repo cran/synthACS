@@ -1,4 +1,4 @@
-68e3a8f5a00d51c6637d889ec4061eb5 *DESCRIPTION
+5d1f34ad3491cb3cb3d8bc6bd9066ee9 *DESCRIPTION
 9efbbd82532f93a37cfe035dacda188a *LICENSE
 d9d9e73ec825c9b01fe143a6b5dc72aa *NAMESPACE
 200a6e671c2fd458b57da88aff324953 *R/RcppExports.R
@@ -41,8 +41,8 @@ ca89bd914fb9fba1472f38b29d47866a *data/adjDR.rda
 f21d6996f74f02d9dc828526b00dbc3a *data/rawDR.rda
 e203660c8d4d09f440ea7aea9772a5e7 *data/stateFR.rda
 29e029cc585e0d4d3d4da87c87d2b75d *inst/CITATION
-a2a4428ea1017558c1160c77b043c5f6 *inst/doc/jss_synthACS.pdf
-552c116b4c050d5912323cbe354819ea *inst/doc/jss_synthACS.tex.rsp
+c0c8cb4fb13eecc6fd0012e5e725dcd6 *inst/doc/jss_synthACS.pdf
+5c949f2f94da679556511765e512477e *inst/doc/jss_synthACS.tex.rsp
 02dba0b8071422d84e6c369bf51a1acb *man/AgeRaceDR.Rd
 346734001f49dc0d57edebcd8eb34b22 *man/BR2014.Rd
 abbc0a7966007d9b34e3be6f105465b9 *man/LifeExp.Rd
@@ -102,7 +102,7 @@ a9150e634fa00a46358213132e016501 *man/summary.smsm_set.Rd
 df4aba4e5871ceb1301b29a657acb06c *man/synthetic_new_attribute.Rd
 3b3814b17dfd7467e8721d8172b9c05a *src/RcppExports.cpp
 af48e760a75ab10e4020d3b433af187a *src/disaggregate_md.cpp
-a92b9dd8f7376a520108075560a94d16 *tests/testthat.R
+0224d86f4b41da8d12a0b16ce1b1da2f *tests/testthat.R
 3ee01a1784c9e02ce3e0da32535cba9a *tests/testthat/test-class_macroACS_methods.R
 3789b71651cce9388eedf25aa66754ec *tests/testthat/test-class_synthACS_methods.R
 437c3db238977744a29a60e744952232 *tests/testthat/test-combine_smsm.R
@@ -142,4 +142,4 @@ f5f4972d8b8f546ea1851ed3f4333041 *vignettes/figures/la_births_hosp.png
 355aa720d3c5bddaf599b75e04128fa6 *vignettes/figures/la_deaths_hosp.png
 f7faed6aeb809a0d530d819eb12794c5 *vignettes/figures/tae_SC.png
 2867ab31b5802f8fccfbcce17f3e1b7c *vignettes/figures/tae_Yuba.png
-552c116b4c050d5912323cbe354819ea *vignettes/jss_synthACS.tex.rsp
+5c949f2f94da679556511765e512477e *vignettes/jss_synthACS.tex.rsp
