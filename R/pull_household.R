@@ -22,6 +22,7 @@ pull_household <- function(endyear, span, geography) {
   #----------------------------------------------
   oldw <- getOption("warn")
   options(warn= -1) # suppress warnings from library(acs) / ACS API
+  on.exit(options(warn= oldw)) # turn warnings back on
   hh_type_r <- acs::acs.fetch(endyear= endyear, span= span, geography= geography, 
                          table.number = "B09019", col.names= "pretty")
   hh_type_units <- acs::acs.fetch(endyear= endyear, span= span, geography= geography, 
@@ -44,7 +45,6 @@ pull_household <- function(endyear, span, geography) {
                                       table.number = "B25071", col.names= "pretty")
   health_ins <- acs::acs.fetch(endyear= endyear, span= span, geography= geography, 
                           table.number = "B27001", col.names= "pretty")
-  options(warn= oldw) # turn warnings back on
   
   # --- these tables not available
   #' B28001 - TYPES OF COMPUTERS IN HOUSEHOLD
@@ -275,8 +275,13 @@ pull_household <- function(endyear, span, geography) {
     ) / apply(est$health_ins[,c(15:16,34:35)], 1, sum)
   
   
-  # 03 -- combine and return
+  # 03 -- sort, combine and return
   #----------------------------------------------
+  geo_sorted <- geo_alphabetize(geo= geo, est= est, se= se)
+  geo <- geo_sorted[["geo"]]
+  est <- geo_sorted[["est"]]
+  se <- geo_sorted[["se"]]
+  
   ret <- list(endyear= endyear, span= span,
               estimates= est,
               standard_error= se,

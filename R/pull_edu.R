@@ -21,6 +21,7 @@ pull_edu <- function(endyear, span, geography) {
   #----------------------------------------------
   oldw <- getOption("warn")
   options(warn= -1) # suppress warnings from library(acs) / ACS API
+  on.exit(options(warn= oldw)) # turn warnings back on
   edu_enroll <- acs::acs.fetch(endyear= endyear, span= span, geography= geography, 
                               table.number = "B14001", col.names= "pretty")
   enroll_details <- acs::acs.fetch(endyear= endyear, span= span, geography= geography, 
@@ -33,7 +34,6 @@ pull_edu <- function(endyear, span, geography) {
 #                           table.number = "B15010", col.names= "pretty"))
 #   edu_internet <- acs::acs.fetch(endyear= endyear, span= span, geography= geography, 
 #                             table.number = "B28006", col.names= "pretty")
-  options(warn= oldw) # turn warnings back on
   
   est <- list(edu_enroll= data.frame(t(edu_enroll@estimate[,-2])),
               enroll_details= data.frame(t(enroll_details@estimate[, -c(2,30)])),
@@ -143,8 +143,13 @@ pull_edu <- function(endyear, span, geography) {
           "prof_deg", "PhD", "pct_ltcol", "pct_col", "pct_grad"), 2), sep= "_"),
     "pct_no_school", "pct_ltcol", "pct_col", "pct_grad")
   
-  # 03 -- combine and return
+  # 03 -- sort, combine, and return
   #----------------------------------------------
+  geo_sorted <- geo_alphabetize(geo= geo, est= est, se= se)
+  geo <- geo_sorted[["geo"]]
+  est <- geo_sorted[["est"]]
+  se <- geo_sorted[["se"]]
+  
   ret <- list(endyear= endyear, span= span,
               estimates= est,
               standard_error= se,
