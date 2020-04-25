@@ -1,4 +1,4 @@
-5efdc109b6d08af64c11de27915846b0 *DESCRIPTION
+4121427f0e9a575c529fd4bce61c3af2 *DESCRIPTION
 9efbbd82532f93a37cfe035dacda188a *LICENSE
 d9d9e73ec825c9b01fe143a6b5dc72aa *NAMESPACE
 200a6e671c2fd458b57da88aff324953 *R/RcppExports.R
@@ -40,8 +40,8 @@ ca89bd914fb9fba1472f38b29d47866a *data/adjDR.rda
 533477081adf8d21e4deb51fa1757fea *data/la_hospitals.rda
 f21d6996f74f02d9dc828526b00dbc3a *data/rawDR.rda
 e203660c8d4d09f440ea7aea9772a5e7 *data/stateFR.rda
-29e029cc585e0d4d3d4da87c87d2b75d *inst/CITATION
-cae06afc273187e19b66f868f6688d3f *inst/doc/jss_synthACS.pdf
+29e096e3fcefc0a667e16bfe16020538 *inst/CITATION
+1c5bc3a476dc7198f08d80596d59ee68 *inst/doc/jss_synthACS.pdf
 d6d8953892e4c0f541d5ee277ca05ecf *inst/doc/jss_synthACS.tex.rsp
 10ab5795a1259a28d67c24b4b37581ef *man/AgeRaceDR.Rd
 2edebfcc33931f574f6a5a025c015030 *man/BR2014.Rd
