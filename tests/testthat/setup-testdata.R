@@ -1,9 +1,4 @@
 
-load(system.file("testdata", 'dat-acsdata.Rda', package= "synthACS"))
-# load("/Users/alexwhitworth/github_projects/synthACS/inst/testdata/dat-acsdata.Rda")
-# devtools::load_all() imported
-
-
 ## constraint lists
 a <- c(under15 = 283597, `15_17` = 57266, `18_24` = 149083, `25_29` = 115003, 
        `30_34` = 115165, `35_39` = 115086, `40_44` = 113904, `45_49` = 113324, 
@@ -25,3 +20,4 @@ n <- c(born_other_state = 275116, born_out_us = 22418, born_state_residence = 75
 r <- c(asian = 392080, `black, afr amer` = 181728, `hispanic, latino` = 332334, 
        `native amer` = 8279, `pacific islander` = 12409, `two or more races` = 82543, 
        `white alone` = 505763)
+
