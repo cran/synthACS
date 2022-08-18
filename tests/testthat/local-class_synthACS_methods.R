@@ -68,7 +68,7 @@ test_that("marital status constraint creates successfully", {
   expect_equal(class(g), "list")
   expect_equal(length(g), length(syn))
   expect_equal(names(g), names(syn))
-  expect_true(all(unlist(lapply(g, names)) == rep(levels(syn[[1]][[2]]$marital_status), 4)))
+  expect_true(all(unlist(lapply(g, names)) == rep(sort(levels(syn[[1]][[2]]$marital_status)), 4)))
   expect_equal(sum(g[[1]]), syn[[1]]$macro_constraints$age_by_sex[1], check.attributes = FALSE)
   expect_equal(sum(g[[2]]), syn[[2]]$macro_constraints$age_by_sex[1], check.attributes = FALSE)
   expect_equal(sum(g[[3]]), syn[[3]]$macro_constraints$age_by_sex[1], check.attributes = FALSE)
@@ -77,7 +77,7 @@ test_that("marital status constraint creates successfully", {
   expect_equal(class(g2), "list")
   expect_equal(length(g2), length(syn))
   expect_equal(names(g2), names(syn))
-  expect_true(all(unlist(lapply(g2, names)) == rep(levels(syn[[1]][[2]]$marital_status), 4)))
+  expect_true(all(unlist(lapply(g2, names)) == rep(sort(levels(syn[[1]][[2]]$marital_status)), 4)))
   expect_equal(sum(g2[[1]]), syn[[1]]$macro_constraints$age_by_sex[1], check.attributes = FALSE)
   expect_equal(sum(g2[[2]]), syn[[2]]$macro_constraints$age_by_sex[1], check.attributes = FALSE)
   expect_equal(sum(g2[[3]]), syn[[3]]$macro_constraints$age_by_sex[1], check.attributes = FALSE)
@@ -265,7 +265,7 @@ test_that("marginalize_attr correctly", {
   expect_equal(nrow(df2), length(levels(df$gender)))
   expect_equal(nrow(df3), length(levels(df$gender)) * length(levels(df$age)))
   expect_equal(nrow(df4), length(levels(df$pov)))
-  expect_equal(df2[,p], as.vector(tapply(df$p, df$gender, sum)))
+  expect_equal(df2[order(gender),p], as.vector(tapply(df$p, df$gender, sum)))
   expect_equal(df4[,p], as.vector(tapply(df$p, list(df$pov), sum)))
   
   # synthACS

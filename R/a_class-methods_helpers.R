@@ -90,7 +90,7 @@ validate_get_inputs <- function(acs, geography, dataset= c("estimate", "st.err")
     stop("geography must be specified as a character vector.")
   } else {
     if (length(geography) == 1L) {
-        if (all(geography != "*", nchar(geography < 4))) {
+        if (all(geography != "*", nchar(geography) < 4)) {
             stop("Please specify at least 4 characters for geography.")
         }
         else if (all(any(geography != "*"), any(nchar(geography) < 4))) {
@@ -131,9 +131,10 @@ fetch_data.macroACS <- function(acs, geography, dataset= c("estimate", "st.err")
     else if (dataset == "st.err") { return(acs$standard_error[[choice]][rowid, ]) }
     else { stop("input 'dataset' is not valid.") }
   } else {
-    if (dataset == "estimate") { return(acs$estimates[[choice]]) } 
-    else if (dataset == "st.err") { return(acs$standard_error[[choice]]) }
+    if (dataset == "estimate") {res <- acs$estimates[[choice]] } 
+    else if (dataset == "st.err") {res <- acs$standard_error[[choice]]}
     else { stop("input 'dataset' is not valid.") }
+    return(res[order(rownames(res)), ])
   }
 }
 
@@ -420,6 +421,7 @@ all_geog_constraint_marital_status.synthACS <- function(obj, method= c("syntheti
       constr_vec <- as.numeric(round(tapply(l[[2]]$p, l[[2]]$marital_status, sum) * l[[1]]$age_by_sex[1], 0))
       constr_vec <- ifelse(is.na(constr_vec), 0, constr_vec)
       names(constr_vec) <- levels(l[[2]]$marital_status)
+      constr_vec <- constr_vec[order(names(constr_vec))]
       # check that population matches macro pop and return
       return(equal_constraint_populations(constr_vec, l[[1]]$age_by_sex[1]))
     })
