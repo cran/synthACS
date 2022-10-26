@@ -1,4 +1,4 @@
-1c86f41ca35e9d593ff47ba3120e2836 *DESCRIPTION
+142e4fe80bd5285d9d54e507bc5ecc6c *DESCRIPTION
 9efbbd82532f93a37cfe035dacda188a *LICENSE
 d9d9e73ec825c9b01fe143a6b5dc72aa *NAMESPACE
 200a6e671c2fd458b57da88aff324953 *R/RcppExports.R
@@ -29,7 +29,7 @@ c1400859d18449a7fb6b93ccbf2d75ab *R/pull_inc_earnings.R
 7ef5bf2496415b63d1ce3a9f33094952 *R/synth_new_attr.R
 8eb790fed6669e235976cd44847fbb7e *R/synth_pov.R
 ae7daee7403bdd481e0b9a008784367b *R/synth_race.R
-c77ecb5904a691b54f997fd636bd627b *build/vignette.rds
+e15291df16a99fab2e6cc3b4e716d5f4 *build/vignette.rds
 931c3f0a678c68986b85c79bbaab660e *data/AgeRaceDR.rda
 0817a47348f0e239158e1981c8661db3 *data/BR2014.rda
 ed99dc478ac6dfc511ac00abd7925899 *data/LifeExp.rda
@@ -39,10 +39,12 @@ ca89bd914fb9fba1472f38b29d47866a *data/adjDR.rda
 533477081adf8d21e4deb51fa1757fea *data/la_hospitals.rda
 f21d6996f74f02d9dc828526b00dbc3a *data/rawDR.rda
 e203660c8d4d09f440ea7aea9772a5e7 *data/stateFR.rda
-29e096e3fcefc0a667e16bfe16020538 *inst/CITATION
-94af010a72bf0b17f2f60b8a2cf8a01d *inst/doc/split_combine.R
-0f4c044e76eb66caa9b28cc2779af6c0 *inst/doc/split_combine.Rmd
-caa46acc5b3ef6960fef5a5bc03757e2 *inst/doc/split_combine.html
+b49dc5ee94c95915310206dc21fdb081 *inst/CITATION
+9b6ecf7a12f3092f45d94bdeebab3fcf *inst/doc/jss_synthACS.ltx
+548309c0b486fcc059291f93a98025c2 *inst/doc/jss_synthACS.pdf
+5e043db3dffb65cccb691842e4abe906 *inst/doc/split_combine.R
+09c02f657ce03b7bebb80f055d3eae59 *inst/doc/split_combine.Rmd
+2758012a58ea38ab88039e8876b4ae87 *inst/doc/split_combine.html
 b976ec19a96419b5dc562c2090aded77 *man/AgeRaceDR.Rd
 cd09ce4b63823c13bc09f5a6902cdd48 *man/BR2014.Rd
 bca3cbb12170e6229ae2b95f47847496 *man/LifeExp.Rd
@@ -149,6 +151,6 @@ f5f4972d8b8f546ea1851ed3f4333041 *vignettes/figures/la_births_hosp.png
 355aa720d3c5bddaf599b75e04128fa6 *vignettes/figures/la_deaths_hosp.png
 f7faed6aeb809a0d530d819eb12794c5 *vignettes/figures/tae_SC.png
 2867ab31b5802f8fccfbcce17f3e1b7c *vignettes/figures/tae_Yuba.png
-0f2bbbdefd3e77d0fd1d2d9f66183420 *vignettes/jss_synthACS.lty
-0f4c044e76eb66caa9b28cc2779af6c0 *vignettes/split_combine.Rmd
+9b6ecf7a12f3092f45d94bdeebab3fcf *vignettes/jss_synthACS.ltx
+09c02f657ce03b7bebb80f055d3eae59 *vignettes/split_combine.Rmd
 1eae00fcf9e1cbebd20cf876c8ba4382 *vignettes/split_ref.bib

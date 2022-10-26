@@ -6,6 +6,7 @@ knitr::opts_chunk$set(echo = TRUE, message = FALSE,
 #  library(data.table)
 #  library(acs)
 #  library(synthACS)
+#  library(retry)
 #  
 #  ca_geo <- geo.make(state = "CA", county = "*")
 #  ca_dat_SMSM <- pull_synth_data(2014, 5, ca_geo)
